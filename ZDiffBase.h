@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Nov 30 17:45:22 2011 by ROOT version 5.30/02
+// Wed Nov 30 17:57:23 2011 by ROOT version 5.30/02
 // from TTree tree_/tree_
 // found on file: files/zdiff/4_2/PythiaZ2_v2_1.root
 //////////////////////////////////////////////////////////
 
-#ifndef pippo_h
-#define pippo_h
+#ifndef ZDiffBase_h
+#define ZDiffBase_h
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -14,7 +14,7 @@
    const Int_t kMaxtimestamp_timeLow = 1;
    const Int_t kMaxtimestamp_timeHigh = 1;
 
-class pippo {
+class ZDiffBase {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -234,8 +234,8 @@ public :
    TBranch        *b_Rootuple_PU_sumpT_lowpT;   //!
    TBranch        *b_Rootuple_PU_sumpT_highpT;   //!
 
-   pippo(TTree *tree=0);
-   virtual ~pippo();
+   ZDiffBase(TTree *tree=0);
+   virtual ~ZDiffBase();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -247,8 +247,8 @@ public :
 
 #endif
 
-#ifdef pippo_cxx
-pippo::pippo(TTree *tree)
+#ifdef ZDiffBase_cxx
+ZDiffBase::ZDiffBase(TTree *tree)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -263,19 +263,19 @@ pippo::pippo(TTree *tree)
    Init(tree);
 }
 
-pippo::~pippo()
+ZDiffBase::~ZDiffBase()
 {
    if (!fChain) return;
    delete fChain->GetCurrentFile();
 }
 
-Int_t pippo::GetEntry(Long64_t entry)
+Int_t ZDiffBase::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
-Long64_t pippo::LoadTree(Long64_t entry)
+Long64_t ZDiffBase::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
    if (!fChain) return -5;
@@ -288,7 +288,7 @@ Long64_t pippo::LoadTree(Long64_t entry)
    return centry;
 }
 
-void pippo::Init(TTree *tree)
+void ZDiffBase::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -412,7 +412,7 @@ void pippo::Init(TTree *tree)
    Notify();
 }
 
-Bool_t pippo::Notify()
+Bool_t ZDiffBase::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -423,18 +423,18 @@ Bool_t pippo::Notify()
    return kTRUE;
 }
 
-void pippo::Show(Long64_t entry)
+void ZDiffBase::Show(Long64_t entry)
 {
 // Print contents of entry.
 // If entry is not specified, print current entry
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t pippo::Cut(Long64_t entry)
+Int_t ZDiffBase::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
 // returns  1 if entry is accepted.
 // returns -1 otherwise.
    return 1;
 }
-#endif // #ifdef pippo_cxx
+#endif // #ifdef ZDiffBase_cxx

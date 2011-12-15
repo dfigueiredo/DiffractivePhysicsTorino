@@ -18,9 +18,10 @@ TFile *Dat_ZeeA;
 TFile *Dat_ZeeB;
 TFile *NDat_ZeeA;
 TFile *NDat_ZeeB;
-TFile *Dat10_ZeeA;
-TFile *Dat10_ZeeB;
+TFile *DatA10_Zee;
+TFile *Dat10_Zee;
 TFile *PYTZ2_Zee;
+TFile *POMPYT_Zee;
 
 void NCZload_3_4(){
   
@@ -47,14 +48,16 @@ void NCZload_3_4(){
 
 void NCZload_4_2(){
   
-  cout<<"Loading  Dat10_ZeeA"<< endl;
-  Dat10_ZeeA = TFile::Open("files/zdiff/4_2/EGrunA_v2_1.root");
-  cout<<"Loading  Dat10_ZeeB"<< endl;
-  Dat10_ZeeB = TFile::Open("files/zdiff/4_2/EGrunB_v2_1.root");
-
+  cout<<"Loading  Dat10A_Zee"<< endl;
+  Dat10A_Zee = TFile::Open("files/zdiff/4_2/EGrunAZee_v2_2.root");
+  cout<<"Loading  Dat10_Zee"<< endl;
+  Dat10_Zee = TFile::Open("files/zdiff/4_2/EGZee_v2_2.root");
 
   cout<<"Loading  PYTZ2_Zee"<< endl;
-  PYTZ2_Zee = TFile::Open("files/zdiff/4_2/PythiaZ2_v2_1.root");
+  PYTZ2_Zee = TFile::Open("files/zdiff/4_2/PythiaZ2Zee_v2_2.root");
+
+  cout<<"Loading POMPYT_Zee"<< endl;
+  POMPYT_Zee = TFile::Open("files/zdiff/4_2/PompytZee_v2_2.root");
 
 
   return;   

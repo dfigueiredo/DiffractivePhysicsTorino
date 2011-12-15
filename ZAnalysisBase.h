@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Nov 30 17:45:22 2011 by ROOT version 5.30/02
+// Mon Dec 12 10:59:00 2011 by ROOT version 5.30/02
 // from TTree tree_/tree_
-// found on file: files/zdiff/4_2/PythiaZ2_v2_1.root
+// found on file: files/zdiff/4_2/PompytZee_v2_2.root
 //////////////////////////////////////////////////////////
 
-#ifndef pippo_h
-#define pippo_h
+#ifndef ZAnalysisBase_h
+#define ZAnalysisBase_h
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -14,7 +14,8 @@
    const Int_t kMaxtimestamp_timeLow = 1;
    const Int_t kMaxtimestamp_timeHigh = 1;
 
-class pippo {
+class ZAnalysisBase {
+
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -58,7 +59,10 @@ public :
    Double_t        etaAllTracks_PF;
    Double_t        max_eta_gap_PF;
    Double_t        max_second_eta_gap_PF;
+   Double_t        eta_gap_limplus;
    Double_t        Mx2;
+   Double_t        Mx2_plus;
+   Double_t        Mx2_minus;
    Double_t        P_x;
    Double_t        P_y;
    Double_t        P_z;
@@ -105,6 +109,8 @@ public :
    Double_t        p_diss_mass_gen;
    Double_t        xL_p_diss;
    Int_t           nPart_PF;
+   Int_t           N_mx2plus;
+   Int_t           N_mx2minus;
    Double_t        etaOutcomingProton;
    Double_t        nParticles_gen;
    Int_t           numberOfLeptons;
@@ -126,6 +132,7 @@ public :
    vector<int>     PU_ntrks_highpT;
    vector<float>   PU_sumpT_lowpT;
    vector<float>   PU_sumpT_highpT;
+   vector<float>   EnergyInEta;
 
    // List of branches
    TBranch        *b_Rootuple_RunNumber;   //!
@@ -165,7 +172,10 @@ public :
    TBranch        *b_Rootuple_etaAllTracks_PF;   //!
    TBranch        *b_Rootuple_max_eta_gap_PF;   //!
    TBranch        *b_Rootuple_max_second_eta_gap_PF;   //!
+   TBranch        *b_Rootuple_eta_gap_limplus;   //!
    TBranch        *b_Rootuple_Mx2;   //!
+   TBranch        *b_Rootuple_Mx2_plus;   //!
+   TBranch        *b_Rootuple_Mx2_minus;   //!
    TBranch        *b_Rootuple_P_x;   //!
    TBranch        *b_Rootuple_P_y;   //!
    TBranch        *b_Rootuple_P_z;   //!
@@ -212,6 +222,8 @@ public :
    TBranch        *b_Rootuple_p_diss_mass_gen;   //!
    TBranch        *b_Rootuple_xL_p_diss;   //!
    TBranch        *b_Rootuple_nPart_PF;   //!
+   TBranch        *b_Rootuple_N_mx2plus;   //!
+   TBranch        *b_Rootuple_N_mx2minus;   //!
    TBranch        *b_Rootuple_etaOutcomingProton;   //!
    TBranch        *b_Rootuple_nParticles_gen;   //!
    TBranch        *b_Rootuple_numberOfLeptons;   //!
@@ -233,9 +245,11 @@ public :
    TBranch        *b_Rootuple_PU_ntrks_highpT;   //!
    TBranch        *b_Rootuple_PU_sumpT_lowpT;   //!
    TBranch        *b_Rootuple_PU_sumpT_highpT;   //!
+   TBranch        *b_Rootuple_EnergyInEta;   //!
 
-   pippo(TTree *tree=0);
-   virtual ~pippo();
+   ZAnalysisBase(TTree *tree=0);
+
+   virtual ~ZAnalysisBase();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -247,35 +261,37 @@ public :
 
 #endif
 
-#ifdef pippo_cxx
-pippo::pippo(TTree *tree)
+#ifdef ZAnalysisBase_cxx
+
+ZAnalysisBase::ZAnalysisBase(TTree *tree)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("files/zdiff/4_2/PythiaZ2_v2_1.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("files/zdiff/4_2/PompytZee_v2_2.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("files/zdiff/4_2/PythiaZ2_v2_1.root");
+         f = new TFile("files/zdiff/4_2/PompytZee_v2_2.root");
       }
-      f->GetObject("tree_",tree);
+      TDirectory * dir = (TDirectory*)f->Get("files/zdiff/4_2/PompytZee_v2_2.root:/Selection");
+      dir->GetObject("tree_",tree);
 
    }
    Init(tree);
 }
 
-pippo::~pippo()
+ZAnalysisBase::~ZAnalysisBase()
 {
    if (!fChain) return;
    delete fChain->GetCurrentFile();
 }
 
-Int_t pippo::GetEntry(Long64_t entry)
+Int_t ZAnalysisBase::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
-Long64_t pippo::LoadTree(Long64_t entry)
+Long64_t ZAnalysisBase::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
    if (!fChain) return -5;
@@ -288,7 +304,7 @@ Long64_t pippo::LoadTree(Long64_t entry)
    return centry;
 }
 
-void pippo::Init(TTree *tree)
+void ZAnalysisBase::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -341,7 +357,10 @@ void pippo::Init(TTree *tree)
    fChain->SetBranchAddress("etaAllTracks_PF", &etaAllTracks_PF, &b_Rootuple_etaAllTracks_PF);
    fChain->SetBranchAddress("max_eta_gap_PF", &max_eta_gap_PF, &b_Rootuple_max_eta_gap_PF);
    fChain->SetBranchAddress("max_second_eta_gap_PF", &max_second_eta_gap_PF, &b_Rootuple_max_second_eta_gap_PF);
+   fChain->SetBranchAddress("eta_gap_limplus", &eta_gap_limplus, &b_Rootuple_eta_gap_limplus);
    fChain->SetBranchAddress("Mx2", &Mx2, &b_Rootuple_Mx2);
+   fChain->SetBranchAddress("Mx2_plus", &Mx2_plus, &b_Rootuple_Mx2_plus);
+   fChain->SetBranchAddress("Mx2_minus", &Mx2_minus, &b_Rootuple_Mx2_minus);
    fChain->SetBranchAddress("P_x", &P_x, &b_Rootuple_P_x);
    fChain->SetBranchAddress("P_y", &P_y, &b_Rootuple_P_y);
    fChain->SetBranchAddress("P_z", &P_z, &b_Rootuple_P_z);
@@ -388,6 +407,8 @@ void pippo::Init(TTree *tree)
    fChain->SetBranchAddress("p_diss_mass_gen", &p_diss_mass_gen, &b_Rootuple_p_diss_mass_gen);
    fChain->SetBranchAddress("xL_p_diss", &xL_p_diss, &b_Rootuple_xL_p_diss);
    fChain->SetBranchAddress("nPart_PF", &nPart_PF, &b_Rootuple_nPart_PF);
+   fChain->SetBranchAddress("N_mx2plus", &N_mx2plus, &b_Rootuple_N_mx2plus);
+   fChain->SetBranchAddress("N_mx2minus", &N_mx2minus, &b_Rootuple_N_mx2minus);
    fChain->SetBranchAddress("etaOutcomingProton", &etaOutcomingProton, &b_Rootuple_etaOutcomingProton);
    fChain->SetBranchAddress("nParticles_gen", &nParticles_gen, &b_Rootuple_nParticles_gen);
    fChain->SetBranchAddress("numberOfLeptons", &numberOfLeptons, &b_Rootuple_numberOfLeptons);
@@ -409,10 +430,11 @@ void pippo::Init(TTree *tree)
    fChain->SetBranchAddress("PU_ntrks_highpT", &PU_ntrks_highpT, &b_Rootuple_PU_ntrks_highpT);
    fChain->SetBranchAddress("PU_sumpT_lowpT", &PU_sumpT_lowpT, &b_Rootuple_PU_sumpT_lowpT);
    fChain->SetBranchAddress("PU_sumpT_highpT", &PU_sumpT_highpT, &b_Rootuple_PU_sumpT_highpT);
+   fChain->SetBranchAddress("EnergyInEta", &EnergyInEta, &b_Rootuple_EnergyInEta);
    Notify();
 }
 
-Bool_t pippo::Notify()
+Bool_t ZAnalysisBase::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -423,18 +445,18 @@ Bool_t pippo::Notify()
    return kTRUE;
 }
 
-void pippo::Show(Long64_t entry)
+void ZAnalysisBase::Show(Long64_t entry)
 {
 // Print contents of entry.
 // If entry is not specified, print current entry
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t pippo::Cut(Long64_t entry)
+Int_t ZAnalysisBase::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
 // returns  1 if entry is accepted.
 // returns -1 otherwise.
    return 1;
 }
-#endif // #ifdef pippo_cxx
+#endif // #ifdef ZAnalysisBase_cxx
