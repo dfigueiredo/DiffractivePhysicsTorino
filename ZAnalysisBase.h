@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Dec 12 10:59:00 2011 by ROOT version 5.30/02
+// Wed Jan 11 14:59:30 2012 by ROOT version 5.30/02
 // from TTree tree_/tree_
-// found on file: files/zdiff/4_2/PompytZee_v2_2.root
+// found on file: files/zdiff/4_2/EGZee_v2_2.root
 //////////////////////////////////////////////////////////
 
 #ifndef ZAnalysisBase_h
@@ -15,7 +15,6 @@
    const Int_t kMaxtimestamp_timeHigh = 1;
 
 class ZAnalysisBase {
-
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -248,7 +247,6 @@ public :
    TBranch        *b_Rootuple_EnergyInEta;   //!
 
    ZAnalysisBase(TTree *tree=0);
-
    virtual ~ZAnalysisBase();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -262,18 +260,16 @@ public :
 #endif
 
 #ifdef ZAnalysisBase_cxx
-
 ZAnalysisBase::ZAnalysisBase(TTree *tree)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("files/zdiff/4_2/PompytZee_v2_2.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("files/zdiff/4_2/EGZee_v2_2.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("files/zdiff/4_2/PompytZee_v2_2.root");
+         f = new TFile("files/zdiff/4_2/EGZee_v2_2.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("files/zdiff/4_2/PompytZee_v2_2.root:/Selection");
-      dir->GetObject("tree_",tree);
+      f->GetObject("tree_",tree);
 
    }
    Init(tree);

@@ -6,7 +6,6 @@
 
 void ZAnalysisBase::Loop()
 {
-
 //   In a ROOT session, you can do:
 //      Root > .L ZAnalysisBase.C
 //      Root > ZAnalysisBase t
