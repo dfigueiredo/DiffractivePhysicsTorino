@@ -47,6 +47,8 @@ class ZAnalysis_Class : public ZAnalysisBase {
    HCand* hCandNoCuts;
    HCand* hCandHF0;
    HCand* hCandNVTX1;
+   HCand* hCandNVTX2;
+   HCand* hCandNVTX3;
    HCand* hCandHF0NVTX1;
    HCand* hCandHFNVTX1;
    

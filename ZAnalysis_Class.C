@@ -32,10 +32,11 @@ void ZAnalysis_Class::Loop()
 //
 
 
-  Int_t NDIR;  /* number or Directories*/      
+  Int_t const NDIR = 3;  /* number or Directories*/      
   string stringa;
   string HistoLabel;
   char hname[100]; 
+
 
 
   Float_t *VtxWeight;
@@ -65,11 +66,11 @@ void ZAnalysis_Class::Loop()
 
 
 
-  NDIR   = 3;  /* number or Directories*/      
+  //  NDIR   = 3;  /* number or Directories*/      
       
   fA = new TFile("files/zdiff/4_2/PompytZee_v2_2.root");
   TDirectory * dirA = (TDirectory*)fA->Get("files/zdiff/4_2/PompytZee_v2_2.root:/Selection");
-  dirA->GetObject("tree_",tree_fA);
+  dirA->GetObject("tree_",tree_fA); 
 
 
   
@@ -112,6 +113,8 @@ void ZAnalysis_Class::Loop()
 
     hCandNoCuts = new HCand("NoCuts",HistoLabel);
     hCandNVTX1 = new HCand("NVTX1",HistoLabel);
+    hCandNVTX2 = new HCand("NVTX2",HistoLabel);
+    hCandNVTX3 = new HCand("NVTX3",HistoLabel);
     hCandHF0 = new HCand("HF0",HistoLabel);
     hCandHF0NVTX1 = new HCand("HF0NVTX1",HistoLabel);
     hCandHFNVTX1 = new HCand("HFNVTX1",HistoLabel);
@@ -140,7 +143,7 @@ void ZAnalysis_Class::Loop()
 
       float xi_min = TMath::Min(xi_PF_plus, xi_PF_minus);
       float EminHF = TMath::Min(sumEHF_plus, sumEHF_minus);     
-
+      float EB =  energyTot_PF_Barrel_minus+energyTot_PF_Barrel_plus;
       // This call fill all generic Histos
 
       Int_t PUGoodVtx = 0;
@@ -158,17 +161,21 @@ void ZAnalysis_Class::Loop()
 			PU_NumInt, nPart_PF, nVtx,Mx, 
 			ZMass, max_eta_gap_PF, 
 			etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+			EB, energyTot_PF_minus,  energyTot_PF_plus,
+			EnergyInEta,
 			Weight);
 
       
-      if(PUGoodVtx == 0) 
+      if(PUGoodVtx == 0)  
 	{
-	  // Fill histo for NVTX1 
+ 	    // Fill histo for NVTX1 
 
 	  hCandNVTX1->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
 			   PU_NumInt, nPart_PF, nVtx,Mx, 
 			   ZMass, max_eta_gap_PF,
 			   etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+			   EB, energyTot_PF_minus,  energyTot_PF_plus,
+			   EnergyInEta,
 			   Weight);
 	  
 
@@ -179,6 +186,8 @@ void ZAnalysis_Class::Loop()
 				  PU_NumInt, nPart_PF, nVtx,Mx, 
 				  ZMass, max_eta_gap_PF, 				  
 				  etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+				  EB, energyTot_PF_minus,  energyTot_PF_plus,
+				  EnergyInEta,
 				  Weight);
 	    }
 	  else
@@ -187,9 +196,37 @@ void ZAnalysis_Class::Loop()
 				 PU_NumInt, nPart_PF, nVtx,Mx, 
 				 ZMass, max_eta_gap_PF,
 				 etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+				 EB, energyTot_PF_minus,  energyTot_PF_plus,
+				 EnergyInEta,
 				 Weight);
 	    }
 
+
+	}
+      else if(PUGoodVtx == 1) 
+	{
+	  // Fill histo for NVTX1 
+
+	  hCandNVTX2->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+			   PU_NumInt, nPart_PF, nVtx,Mx, 
+			   ZMass, max_eta_gap_PF,
+			   etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+			   EB, energyTot_PF_minus,  energyTot_PF_plus,
+			   EnergyInEta,
+			   Weight);
+
+	}
+      else if(PUGoodVtx == 2) 
+	{
+	  // Fill histo for NVTX1 
+
+	  hCandNVTX3->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+			   PU_NumInt, nPart_PF, nVtx,Mx, 
+			   ZMass, max_eta_gap_PF,
+			   etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+			   EB, energyTot_PF_minus,  energyTot_PF_plus,
+			   EnergyInEta,
+			   Weight);
 
 	}
 
@@ -201,6 +238,8 @@ void ZAnalysis_Class::Loop()
 			PU_NumInt, nPart_PF, nVtx,Mx, 
 			ZMass, max_eta_gap_PF, 
 			 etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+			 EB, energyTot_PF_minus,  energyTot_PF_plus,
+			 EnergyInEta,
 			 Weight);
 	}
 
@@ -211,9 +250,12 @@ void ZAnalysis_Class::Loop()
 
     hCandNoCuts->WriteInFile(outputfile.c_str());
     hCandNVTX1->WriteInFile(outputfile.c_str());
+    hCandNVTX2->WriteInFile(outputfile.c_str());
+    hCandNVTX3->WriteInFile(outputfile.c_str());
     hCandHF0->WriteInFile(outputfile.c_str());
     hCandHF0NVTX1->WriteInFile(outputfile.c_str());
     hCandHFNVTX1->WriteInFile(outputfile.c_str());
+
 
   } // NDIR Loop
 
