@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Feb  6 09:04:33 2012 by ROOT version 5.30/02
+// Mon Feb  6 09:02:16 2012 by ROOT version 5.30/02
 // from TTree tree_/tree_
 // found on file: files/zdiff/4_2/Data_Zee_2010B_v2_4.root
 //////////////////////////////////////////////////////////
 
-#ifndef ZAnalysisBase_h
-#define ZAnalysisBase_h
+#ifndef ZAnalysis_Base_h
+#define ZAnalysis_Base_h
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -14,7 +14,7 @@
    const Int_t kMaxtimestamp_timeLow = 1;
    const Int_t kMaxtimestamp_timeHigh = 1;
 
-class ZAnalysisBase {
+class ZAnalysis_Base {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -268,8 +268,8 @@ public :
    TBranch        *b_Rootuple_EnergyInEtaHFS;   //!
    TBranch        *b_Rootuple_EnergyCastorModule;   //!
 
-   ZAnalysisBase(TTree *tree=0);
-   virtual ~ZAnalysisBase();
+   ZAnalysis_Base(TTree *tree=0);
+   virtual ~ZAnalysis_Base();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -281,8 +281,8 @@ public :
 
 #endif
 
-#ifdef ZAnalysisBase_cxx
-ZAnalysisBase::ZAnalysisBase(TTree *tree)
+#ifdef ZAnalysis_Base_cxx
+ZAnalysis_Base::ZAnalysis_Base(TTree *tree)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -298,19 +298,19 @@ ZAnalysisBase::ZAnalysisBase(TTree *tree)
    Init(tree);
 }
 
-ZAnalysisBase::~ZAnalysisBase()
+ZAnalysis_Base::~ZAnalysis_Base()
 {
    if (!fChain) return;
    delete fChain->GetCurrentFile();
 }
 
-Int_t ZAnalysisBase::GetEntry(Long64_t entry)
+Int_t ZAnalysis_Base::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
-Long64_t ZAnalysisBase::LoadTree(Long64_t entry)
+Long64_t ZAnalysis_Base::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
    if (!fChain) return -5;
@@ -323,7 +323,7 @@ Long64_t ZAnalysisBase::LoadTree(Long64_t entry)
    return centry;
 }
 
-void ZAnalysisBase::Init(TTree *tree)
+void ZAnalysis_Base::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -464,7 +464,7 @@ void ZAnalysisBase::Init(TTree *tree)
    Notify();
 }
 
-Bool_t ZAnalysisBase::Notify()
+Bool_t ZAnalysis_Base::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -475,18 +475,18 @@ Bool_t ZAnalysisBase::Notify()
    return kTRUE;
 }
 
-void ZAnalysisBase::Show(Long64_t entry)
+void ZAnalysis_Base::Show(Long64_t entry)
 {
 // Print contents of entry.
 // If entry is not specified, print current entry
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t ZAnalysisBase::Cut(Long64_t entry)
+Int_t ZAnalysis_Base::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
 // returns  1 if entry is accepted.
 // returns -1 otherwise.
    return 1;
 }
-#endif // #ifdef ZAnalysisBase_cxx
+#endif // #ifdef ZAnalysis_Base_cxx

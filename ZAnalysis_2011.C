@@ -14,21 +14,81 @@
 #include <TProfile.h> 
 
 void FindZ2Weight(){
+
+  NCanvas(1,1,"data");
+  NCanvas(1,1,"ratio");
+
   TH1F * Pyt;
   TH1F * Dat;
+  TH1F * Data;
 
   TFile *fzee = new TFile("ZDiffOutputfile.root");
-  Pyt  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_PythiaZ2");
-  Dat  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_Data10");
+  Pyt  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_Z2PY6");
+  Dat  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");
+  Data  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");
+  data->cd(1);
+  Data->Draw();
 
   Float_t scale = Pyt->Integral()/Dat->Integral();
   cout << "Scaling factor to conserve MC luminosity = " << scale << endl;
+  ratio->cd(1);
   Dat->Divide(Pyt);
   //  Dat->Scale(scale);
   Dat->Draw();
   cout << "Float_t Z2Weight[] = {" ;
   for (Int_t j = 1;j<=19; j++)   cout <<  Dat->GetBinContent(j) << ", " ;
   cout << " 0 }; " << endl;
+}
+
+
+void FindC4Weight(){
+
+  NCanvas(1,1,"data");
+  NCanvas(1,1,"ratio");
+
+  TH1F * Pyt;
+  TH1F * Dat;
+  TH1F * Data;
+
+  TFile *fzee = new TFile("ZDiffOutputfile.root");
+  Pyt  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_4CPY8");
+  Dat  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");
+  Data  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");
+  data->cd(1);
+  Data->Draw();
+
+  Float_t scale = Pyt->Integral()/Dat->Integral();
+  cout << "Scaling factor to conserve MC luminosity = " << scale << endl;
+  ratio->cd(1);
+  Dat->Divide(Pyt);
+  //  Dat->Scale(scale);
+  Dat->Draw();
+  cout << "Float_t C4Weight[] = {" ;
+  for (Int_t j = 1;j<=19; j++)   cout <<  Dat->GetBinContent(j) << ", " ;
+  cout << " 0 }; " << endl;
+}
+
+
+
+// Number of vertices in 2010
+void Vertex2010(){
+
+  NCanvas(1,1,"data");
+  TH1F * Dat;
+
+  TFile *fzee = new TFile("ZDiffOutputfile.root");
+  Dat  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_Data10");
+  data->cd(1);
+  NLogAxis(0,1);
+  Dat->Draw();
+  Dat->GetXaxis()->SetTitle("Number of PU");
+  Dat->GetYaxis()->SetTitle("Entries");
+  Dat->GetYaxis()->SetTitle("Entries");
+  Dat->SetTitle("# of PU vertexes for Z->ee events in 2010");
+  Int_t nVtx0 = Dat->GetBinContent(1);
+ 
+
+  NText (10,100,"Num");
 }
 
 
@@ -68,7 +128,7 @@ void FindZ2HFWeight(){
 
 void Data10Z2Comp(){
 
-  Int_t const Nbin = 28;
+  Int_t const Nbin = 33;
   TH1F *Pyt[Nbin];
   TH1F *Dat[Nbin];
 
@@ -77,70 +137,89 @@ void Data10Z2Comp(){
 
   NCanvas(2,2,"HFNVTX1");
   NCanvas(2,2,"HF0NVTX1");
-  NCanvas(2,2,"NVTX1_A");
+  NCanvas(3,3,"NVTX1_A");
   NCanvas(2,2,"NVTX1_B");
   NCanvas(2,2,"NVTX2_A");
   NCanvas(2,2,"NVTX3_A");
   NCanvas(2,2,"NoCuts");
 
-  NT[0] = "HFNVTX1_nPart_PF_";
-  NT[1] = "HFNVTX1_Xi_PF_";
-  NT[2] = "HFNVTX1_vertexMolteplicity_";
-  NT[3] = "HFNVTX1_nTowersHF_plus_";
+  Int_t k = 0;
 
-  NT[4] = "HF0NVTX1_nPart_PF_";
-  NT[5] = "HF0NVTX1_Xi_PF_";
-  NT[6] = "HF0NVTX1_etaZ_";
-  NT[7] = "HF0NVTX1_etaWeightedOnEnergy_PF_";
+  NT[k++] = "HFNVTX1_nPart_PF_";
+  NT[k++] = "HFNVTX1_Xi_PF_";
+  NT[k++] = "HFNVTX1_vertexMolteplicity_";
+  NT[k++] = "HFNVTX1_nTowersHF_plus_";
 
-  NT[8] = "NVTX1_EHF_";
-  NT[9] = "NVTX1_EHFZoom_";
-  NT[10] = "NVTX1_EBarrel_";
-  NT[11] = "NVTX1_EEndcap_";
+  NT[k++] = "HF0NVTX1_nPart_PF_";
+  NT[k++] = "HF0NVTX1_Xi_PF_";
+  NT[k++] = "HF0NVTX1_etaZ_";
+  NT[k++] = "HF0NVTX1_etaWeightedOnEnergy_PF_";
 
 
-  NT[12] = "NVTX1_nTowersHF_plus_";
-  NT[13] = "NVTX1_max_eta_gap_PF_";
-  NT[14] = "NVTX1_etaZ_";
-  NT[15] = "NVTX1_etaWeightedOnEnergy_PF_";
+  //  NT[k++] = "NVTX1_EBarrel_";
+  // NT[k++] = "NVTX1_EEndcap_";
+  NT[k++] = "NVTX1_EHF_S_";
+  NT[k++] = "NVTX1_EHF_L_";
+  NT[k++] = "NVTX1_EHF_";
+  NT[k++] = "NVTX2_EBarrel_";
+  NT[k++] = "NVTX2_EEndcap_";
+  NT[k++] = "NVTX2_EHF_";
+  NT[k++] = "NVTX3_EBarrel_";
+  NT[k++] = "NVTX3_EEndcap_";
+  NT[k++] = "NVTX3_EHF_";
 
-  NT[16] = "NoCuts_GoodVtx_";
-  NT[17] = "NoCuts_Xi_PF_";
-  NT[18] = "NoCuts_minEHF_";
-  NT[19] = "NoCuts_max_eta_gap_PF_";
+  NT[k++] = "NVTX1_nTowersHF_plus_";
+  NT[k++] = "NVTX1_max_eta_gap_PF_";
+  NT[k++] = "NVTX1_etaZ_";
+  NT[k++] = "NVTX1_etaWeightedOnEnergy_PF_";
 
-  NT[20] = "NVTX2_EHF_";
-  NT[21] = "NVTX2_EHFZoom_";
-  NT[22] = "NVTX2_EBarrel_";
-  NT[23] = "NVTX2_EEndcap_";
+  NT[k++] = "NoCuts_GoodVtx_";
+  NT[k++] = "NoCuts_Xi_PF_";
+  NT[k++] = "NoCuts_minEHF_";
+  NT[k++] = "NoCuts_max_eta_gap_PF_";
 
-  NT[24] = "NVTX3_EHF_";
-  NT[25] = "NVTX3_EHFZoom_";
-  NT[26] = "NVTX3_EBarrel_";
-  NT[27] = "NVTX3_EEndcap_";
+  NT[k++] = "NVTX2_EHF_";
+  NT[k++] = "NVTX2_EHFZoom_";
+  NT[k++] = "NVTX2_EBarrel_";
+  NT[k++] = "NVTX2_EEndcap_";
 
-
-
-
-
+  NT[k++] = "NVTX3_EHF_";
+  NT[k++] = "NVTX3_EHFZoom_";
+  NT[k++] = "NVTX3_EBarrel_";
+  NT[k++] = "NVTX3_EEndcap_";
 
   for (Int_t ii = 0; ii<Nbin ; ii++)
     {
-      Pyt[ii]  =  (TH1F*)fzee->Get(NT[ii]+"PythiaZ2");
-      Dat[ii]  =  (TH1F*)fzee->Get(NT[ii]+"Data10");
+      Pyt[ii]  =  (TH1F*)fzee->Get(NT[ii]+"Z2PY6");
+      Dat[ii]  =  (TH1F*)fzee->Get(NT[ii]+"DATA10");
 
       Pyt[ii]->SetMinimum(1.) ;
       Dat[ii]->SetMinimum(1.);
 
       cout << NT[ii] << " " << ii << " " << Dat[ii]<< endl;
-      
-      if (ii<=3) HFNVTX1->cd(ii+1);
-      else if (ii>3 && ii<=7)  HF0NVTX1->cd(ii-3);
-      else if (ii>7 && ii<=11) NVTX1_A->cd(ii-7);
-      else if (ii>11 && ii<=15) NVTX1_B->cd(ii-11);
-      else if (ii>15 && ii<=19) NoCuts->cd(ii-15);
-      else if (ii>19 && ii<=23) NVTX2_A->cd(ii-19);
-      else if (ii>23 && ii<=27) NVTX3_A->cd(ii-23);
+
+      Int_t k1 = 3;
+      Int_t k2 = 7;
+
+      if (ii<= k1) HFNVTX1->cd(ii+1);
+      if (ii>k1 && ii<= k2)  HF0NVTX1->cd(ii-k1);
+      k1 = k2;
+      k2 = k1+9;
+      cout << "k1 = " << k1 << " k2 = " << k2 << endl;
+      if (ii> k1 && ii<= k2) NVTX1_A->cd(ii-k1);
+      k1 = k2;
+      k2 = k1+4;
+      cout << "k1 = " << k1 << " k2 = " << k2 << endl;
+      if (ii>k1 && ii<= k2) NVTX1_B->cd(ii-k1);
+      k1 = k2;
+      k2 = k1+4;
+      if (ii>k1 && ii<= k2) NoCuts->cd(ii-k1);
+      k1 = k2;
+      k2 = k1+4;
+      if (ii>k1 && ii<=k2) NVTX2_A->cd(ii-k1);
+      k1 = k2;
+      k2 = k1+4;
+      if (ii>k1 && ii<=k2) NVTX3_A->cd(ii-k1);
 
       Pyt[ii]->SetLineColor(2);
       NStat(Pyt[ii],1);
@@ -150,14 +229,29 @@ void Data10Z2Comp(){
 	{
 	  Dat[ii]->Draw();
 	  Pyt[ii]->Draw("HIST SAME ");     
+	  Dat[ii]->SetXTitle("Energy [GeV]");
+	  Dat[ii]->SetYTitle("Entries");
+	  NStat(Dat[ii],0);
+	  //	  NSetLabelSize(Dat[ii]);
+
 	}
       else
 	{
 	  Pyt[ii]->Draw("HIST");
 	  Dat[ii]->Draw("SAME P ");     
+	  Pyt[ii]->SetXTitle("Energy [GeV]");
+	  Pyt[ii]->SetYTitle("Entries");
+	  NStat(Pyt[ii],0);
+	  // NSetLabelSize(Pyt[ii]);
 	}
 
-
+       TLegend *legend = new TLegend(0.75,0.7,0.9,0.9);
+       legend->SetTextFont(72);
+       legend->SetTextSize(0.05);
+       legend->AddEntry(Dat[ii],"Data","p");
+       legend->AddEntry(Pyt[ii]," Z2","l");
+       legend->Draw();
+       
     }
 
 
@@ -178,29 +272,35 @@ void Data10Z2Comp(){
 void fit2histo ()
 {
   
-  TH1F * Pyt[2];
-  TH1F * Dat[2];
-  TH1F * Pom[2];
+  Int_t const Nhist = 4;
+
+  TH1F * Pyt[Nhist];
+  TH1F * Dat[Nhist];
+  TH1F * Pom[Nhist];
 
   TFile *fzee = new TFile("ZDiffOutputfile.root");
 
   //  cout<< fzee << endl;
 
-  TString NT[3];
+  TString NT[Nhist];
+  NT[0] = "SGETA1NVTX1_max_eta_gap_PF_";
+  NT[1] = "SGETA1NVTX1_max_second_eta_gap_";
   NT[0] = "NVTX1_max_eta_gap_PF_";
-  NT[1] = "HFNVTX1_max_eta_gap_PF_";
-  NT[2] = "HF0NVTX1_max_eta_gap_PF_";
+  NT[1] = "NVTX1_max_second_eta_gap_";
+  NT[2] = "HFNVTX1_max_eta_gap_PF_";
+  NT[3] = "NVTX1_EHF_";
 
-  TString Str[3];
+  TString Str[Nhist];
 
   Str[0] = "Eta gap, 1 vxt";
-  Str[1] = "Eta gap, 1 vxt && HF != 0";
-  Str[2] = "Eta gap, 1 vxt && HF ==0 ";
+  Str[1] = "Second Eta gap, 1 vxt";
+  Str[2] = "Eta gap, 1 vxt && HF !=0 ";
+  Str[3] = "HF Energy ";
 
 
-  NCanvas(2,2,"EtaGap");
+  NCanvas(1,2,"EtaGap");
 
-  for (Int_t i=0;i<3;i++)
+  for (Int_t i=0;i<Nhist-2;i++)
     {
       Pyt[i]  =  (TH1F*)fzee->Get(NT[i]+"PythiaZ2");  
       Dat[i]  =  (TH1F*)fzee->Get(NT[i]+"Data10");

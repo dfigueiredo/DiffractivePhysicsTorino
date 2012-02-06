@@ -63,6 +63,7 @@ class NStat{
 
 
 
+//Sum 2 MC histo to the data
 class NFitMCToData{
  public:
   NFitMCToData(TH1F *Dat, TH1F *MC1, TH1F *MC2, TString Str = "Plot")  // Dat = fsig*MC1+(1-fsig)*MC2
@@ -90,16 +91,27 @@ class NFitMCToData{
       model.fitTo(Data_in);
       
       RooPlot* frame = x.frame() ;
-      Data_in.plotOn(frame) ; 
-      model.plotOn(frame) ; 
+      Data_in.plotOn(frame,  RooFit::Name("Data"),RooFit::DrawOption(" ")) ; 
+      model.plotOn(frame, RooFit::Name("Fit")) ; 
       // 
-      model.plotOn(frame, RooFit::Components(PDFMC1_in),RooFit::LineColor(kBlue),RooFit::LineStyle(kDotted)) ; 
-      model.plotOn(frame, RooFit::Components(PDFMC2_in),RooFit::LineColor(kRed),RooFit::LineStyle(kDashed)) ; 
+      model.plotOn(frame,  RooFit::Name("Pythia"), RooFit::Components(PDFMC1_in),RooFit::LineColor(kBlue),RooFit::LineStyle(kDotted)) ; 
+      model.plotOn(frame, RooFit::Name("Pompyt"),RooFit::Components(PDFMC2_in),RooFit::LineColor(kRed),RooFit::LineStyle(kDashed)) ; 
       
       frame->Draw() ;
       frame->SetMinimum(0.1);
       frame->SetMaximum(800.);
+      frame->SetXTitle(Str);
+      frame->SetTitle(Str);
 
+       TLegend *legend = new TLegend(0.7,0.7,0.9,0.9);
+       legend->SetTextFont(72);
+       legend->SetTextSize(0.05);
+       legend->AddEntry("Data","Data","P ");
+       legend->AddEntry("Fit","Fit","L ");
+       legend->AddEntry("Pythia","Pythia","L ");
+       legend->AddEntry("Pompyt","Pompyt","L ");
+       legend->Draw();
+       
       
       
       

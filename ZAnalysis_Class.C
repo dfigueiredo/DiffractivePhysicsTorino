@@ -32,7 +32,7 @@ void ZAnalysis_Class::Loop()
 //
 
 
-  Int_t const NDIR = 3;  /* number or Directories*/      
+  Int_t const NDIR = 4;  /* number or Directories*/      
   string stringa;
   string HistoLabel;
   char hname[100]; 
@@ -52,15 +52,30 @@ void ZAnalysis_Class::Loop()
 
   //Weight normalizing Z2 to Run2010
 
-  Float_t Z2Weight[] = {0.311428, 0.397517, 0.300365, 0.142039, 0.0595897, 
-			0.0226608, 0.00832318, 0.00239349, 0.000300661, 0, 
-			0, 0, 0, 0, 0, 
-			0, 0, 0, 0, 0};
+  Float_t Z2Weight[] = {0.27356, 0.380519, 0.302952, 0.14631, 
+			0.0610787, 0.0235886, 0.00850702, 0.00252781, 
+			0.00032113, 0, 0, 0, 
+			0, 0, 0, 0, 
+			0, 0, 0,  0 };
+
+
+  //{0.311428, 0.397517, 0.300365, 0.142039, 0.0595897, 
+  //			0.0226608, 0.00832318, 0.00239349, 0.000300661, 0, 
+  //			0, 0, 0, 0, 0, 
+  //			0, 0, 0, 0, 0};
+  
+  Float_t C4Weight[] = {0.275802, 0.379986, 0.298846, 0.145418, 
+			0.0612283, 0.0234525, 0.00860585, 0.00250125, 
+			0.000321543, 0, 0, 0, 
+			0, 0, 0, 0, 
+			0, 0, 0,  0 };
+
 
   Float_t OneWeight[] = {1.,1.,1.,1.,1.,
 			 1.,1.,1.,1.,1.,
 			 1.,1.,1.,1.,1.,
 			 1.,1.,1.,1.,1.};
+
 
  
 
@@ -68,19 +83,26 @@ void ZAnalysis_Class::Loop()
 
   //  NDIR   = 3;  /* number or Directories*/      
       
-  fA = new TFile("files/zdiff/4_2/PompytZee_v2_2.root");
-  TDirectory * dirA = (TDirectory*)fA->Get("files/zdiff/4_2/PompytZee_v2_2.root:/Selection");
+  fA = new TFile("files/zdiff/4_2/MC_Zee_POMPYT_v2_4.root");
+  TDirectory * dirA = (TDirectory*)fA->Get("files/zdiff/4_2/MC_Zee_POMPYT_v2_4.root:/Selection");
   dirA->GetObject("tree_",tree_fA); 
 
 
   
-  fB = new TFile("files/zdiff/4_2/EGZee_v2_2.root");
-  fB->GetObject("tree_",tree_fB);
+  fB = new TFile("files/zdiff/4_2/DATA_Zee_2010_v2_4.root");
+  TDirectory * dirB = (TDirectory*)fB->Get("files/zdiff/4_2/DATA_Zee_2010_v2_4.root:/Selection");
+    //fB->GetObject("tree_",tree_fB);
+  dirB->GetObject("tree_",tree_fB);
   
   
-  fC = new TFile("files/zdiff/4_2/PythiaZ2Zee_v2_2.root");
-  TDirectory * dirC = (TDirectory*)fC->Get("files/zdiff/4_2/PythiaZ2Zee_v2_2.root:/Selection");
+  fC = new TFile("files/zdiff/4_2/MC_Zee_4CPY8_v2_4.root");
+  TDirectory * dirC = (TDirectory*)fC->Get("files/zdiff/4_2/MC_Zee_4CPY8_v2_4.root:/Selection");
   dirC->GetObject("tree_",tree_fC);
+
+
+  fD = new TFile("files/zdiff/4_2/MC_Zee_Z2PY6_v2_4.root");
+  TDirectory * dirD = (TDirectory*)fD->Get("files/zdiff/4_2/MC_Zee_Z2PY6_v2_4.root:/Selection");
+  dirD->GetObject("tree_",tree_fD);
   
  
   string outputfile = "ZDiffOutputfile.root";
@@ -93,21 +115,29 @@ void ZAnalysis_Class::Loop()
     if (i==1)
       {
 	fChain =tree_fA; 
-	HistoLabel = "Pompyt";
+	HistoLabel = "POMPYT";
        	VtxWeight = OneWeight; 
       }
     else if (i==2)
       {
 	fChain =tree_fB; 
-	HistoLabel = "Data10";
+	HistoLabel = "DATA10";
         VtxWeight = OneWeight; 
       }
     else if (i==3)
       { 
 	fChain = tree_fC; 
-	HistoLabel = "PythiaZ2";
+	HistoLabel = "4CPY8";
+       	VtxWeight = C4Weight; 
+	VtxWeight = OneWeight; 
+      }
+    else if (i==4)
+      { 
+	fChain = tree_fD; 
+	HistoLabel = "Z2PY6";
        	VtxWeight = Z2Weight; 
-	//	VtxWeight = OneWeight; 
+ 	VtxWeight = OneWeight; 
+
       }
 
 
@@ -118,6 +148,7 @@ void ZAnalysis_Class::Loop()
     hCandHF0 = new HCand("HF0",HistoLabel);
     hCandHF0NVTX1 = new HCand("HF0NVTX1",HistoLabel);
     hCandHFNVTX1 = new HCand("HFNVTX1",HistoLabel);
+    hCandSGETA1NVTX1 = new HCand("SGETA1NVTX1",HistoLabel);
 
     
     Init(fChain);
@@ -132,6 +163,7 @@ void ZAnalysis_Class::Loop()
     cout << "Processing " << HistoLabel.c_str() << " with " << nentries << " events." << endl;
 
     Long64_t nbytes = 0, nb = 0;
+    if (nentries > 50000) nentries = 50000;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
       if (jentry % 10000 == 0 && jentry != 0) cout << "jentry = " << jentry << endl;
@@ -154,15 +186,20 @@ void ZAnalysis_Class::Loop()
 	  if (vertexNDOF[j]>4) PUGoodVtx++;
 	}
       
+      Float_t Gap_Calo = TMath::Max((4.9 - etaMax_Calo), -(-4.9 - etaMin_Calo));
+      Float_t Gap_PF = TMath::Max((4.9 - etaMax_PF), -(-4.9 - etaMin_PF));
+
+
       Float_t Weight = VtxWeight[PUGoodVtx];
       Int_t nVtx = vertexMolteplicity[0];
       Float_t Mx = sqrt(Mx2);
-      hCandNoCuts->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+      hCandNoCuts->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
 			PU_NumInt, nPart_PF, nVtx,Mx, 
 			ZMass, max_eta_gap_PF, 
 			etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
 			EB, energyTot_PF_minus,  energyTot_PF_plus,
-			EnergyInEta,
+			EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+			max_second_eta_gap_PF,Gap_Calo,Gap_PF,
 			Weight);
 
       
@@ -170,34 +207,46 @@ void ZAnalysis_Class::Loop()
 	{
  	    // Fill histo for NVTX1 
 
-	  hCandNVTX1->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+	  hCandNVTX1->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
 			   PU_NumInt, nPart_PF, nVtx,Mx, 
 			   ZMass, max_eta_gap_PF,
 			   etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
 			   EB, energyTot_PF_minus,  energyTot_PF_plus,
-			   EnergyInEta,
+			   EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+			   max_second_eta_gap_PF,Gap_Calo,Gap_PF,
 			   Weight);
+
+	  if (max_second_eta_gap_PF>1. || max_eta_gap_PF>3.) 
+	    {
+	      hCandSGETA1NVTX1->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
+				     PU_NumInt, nPart_PF, nVtx,Mx, 
+				     ZMass, max_eta_gap_PF,
+				     etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+				     EB, energyTot_PF_minus,  energyTot_PF_plus,
+				     EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+				     max_second_eta_gap_PF,Gap_Calo,Gap_PF,
+				     Weight);
+	    }
 	  
-
-
 	  if(EminHF < 4.) 
 	    {
-	      hCandHF0NVTX1->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+	      hCandHF0NVTX1->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
 				  PU_NumInt, nPart_PF, nVtx,Mx, 
-				  ZMass, max_eta_gap_PF, 				  
-				  etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
+				  ZMass, max_eta_gap_PF, 				  				  etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
 				  EB, energyTot_PF_minus,  energyTot_PF_plus,
-				  EnergyInEta,
+				  EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+				  max_second_eta_gap_PF,Gap_Calo,Gap_PF,
 				  Weight);
 	    }
 	  else
 	    {
-	      hCandHFNVTX1->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+	      hCandHFNVTX1->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
 				 PU_NumInt, nPart_PF, nVtx,Mx, 
 				 ZMass, max_eta_gap_PF,
 				 etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
 				 EB, energyTot_PF_minus,  energyTot_PF_plus,
-				 EnergyInEta,
+				 EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+				 max_second_eta_gap_PF,Gap_Calo,Gap_PF,
 				 Weight);
 	    }
 
@@ -207,12 +256,13 @@ void ZAnalysis_Class::Loop()
 	{
 	  // Fill histo for NVTX1 
 
-	  hCandNVTX2->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+	  hCandNVTX2->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
 			   PU_NumInt, nPart_PF, nVtx,Mx, 
 			   ZMass, max_eta_gap_PF,
 			   etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
 			   EB, energyTot_PF_minus,  energyTot_PF_plus,
-			   EnergyInEta,
+			   EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+			   max_second_eta_gap_PF,Gap_Calo,Gap_PF,
 			   Weight);
 
 	}
@@ -220,12 +270,13 @@ void ZAnalysis_Class::Loop()
 	{
 	  // Fill histo for NVTX1 
 
-	  hCandNVTX3->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+	  hCandNVTX3->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
 			   PU_NumInt, nPart_PF, nVtx,Mx, 
 			   ZMass, max_eta_gap_PF,
 			   etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
 			   EB, energyTot_PF_minus,  energyTot_PF_plus,
-			   EnergyInEta,
+			   EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+			   max_second_eta_gap_PF,Gap_Calo,Gap_PF,
 			   Weight);
 
 	}
@@ -234,12 +285,13 @@ void ZAnalysis_Class::Loop()
       if(EminHF == 0) 
 	{
 	  // Fill histo for EminHF=0 
-	  hCandHF0->Fill(EminHF, sumEHF_plus, xi_min, PUGoodVtx, 
+	  hCandHF0->Fill(EminHF, sumEHF_L_plus,sumEHF_S_plus, xi_min, PUGoodVtx, 
 			PU_NumInt, nPart_PF, nVtx,Mx, 
 			ZMass, max_eta_gap_PF, 
 			 etaZ,etaWeightedOnEnergy_PF,nTowersHF_plus,
 			 EB, energyTot_PF_minus,  energyTot_PF_plus,
-			 EnergyInEta,
+			 EnergyInEta, EnergyInEtaHFS,EnergyInEtaHFL,
+			 max_second_eta_gap_PF,Gap_Calo,Gap_PF,
 			 Weight);
 	}
 
@@ -255,6 +307,7 @@ void ZAnalysis_Class::Loop()
     hCandHF0->WriteInFile(outputfile.c_str());
     hCandHF0NVTX1->WriteInFile(outputfile.c_str());
     hCandHFNVTX1->WriteInFile(outputfile.c_str());
+    hCandSGETA1NVTX1->WriteInFile(outputfile.c_str());
 
 
   } // NDIR Loop

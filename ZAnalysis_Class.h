@@ -51,6 +51,7 @@ class ZAnalysis_Class : public ZAnalysisBase {
    HCand* hCandNVTX3;
    HCand* hCandHF0NVTX1;
    HCand* hCandHFNVTX1;
+   HCand* hCandSGETA1NVTX1;
    
 
 };
