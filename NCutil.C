@@ -180,12 +180,6 @@ void NText(Float_t x1, Float_t y1, string text, Int_t col=1, Float_t Tsize=0.04)
 // ********************************
 
 
-void NSetTitle(TH1F *histo, TString Titlex, TString Titley)
-{
-  histo->GetXaxis()->SetTitle(Titlex);
-  histo->GetYaxis()->SetTitle(Titley);
-
-}
 
 // Set the x range using the axis coordinates //
 void NSetXRange(TH1F *histo, Float_t xLow, Float_t xHigh)

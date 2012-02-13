@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <string>
 
+
 class NSetLabelSize{
  public:
 
@@ -33,6 +34,85 @@ class NSetLabelSize{
     }
   ~NSetLabelSize() {}
 };
+
+class NSetTitleSize{
+ public:
+
+  NSetTitleSize(TH1F *histo,Float_t Xoffset = 0.7,Float_t Yoffset = 1. ,Float_t Size = 0.08)
+    {
+      histo->GetXaxis()->SetTitleSize(Size);
+      histo->GetXaxis()->SetTitleOffset(Xoffset);
+      histo->GetYaxis()->SetTitleSize(Size);
+      histo->GetYaxis()->SetTitleOffset(Yoffset);
+    }
+  NSetTitleSize(TH2F *histo,Float_t Xoffset = 0.7,Float_t Yoffset = 1. ,Float_t Size = 0.08)
+    {
+      histo->GetXaxis()->SetTitleSize(Size);
+      histo->GetXaxis()->SetTitleOffset(Xoffset);
+      histo->GetYaxis()->SetTitleSize(Size);
+      histo->GetYaxis()->SetTitleOffset(Yoffset);
+    }
+  ~NSetTitleSize(){}
+};
+
+Class NSetTitle{
+ public:
+  NSetTitle( TH1F *histo, TString Titlex, TString Titley)
+    {
+      histo->GetXaxis()->SetTitle(Titlex);
+      histo->GetYaxis()->SetTitle(Titley);
+    }
+  NSetTitle( TH2F *histo, TString Titlex, TString Titley)
+    {
+      histo->GetXaxis()->SetTitle(Titlex);
+      histo->GetYaxis()->SetTitle(Titley);
+    }
+  ~ NSetTitle(){}
+};
+
+class NHSetMarker{
+ public:
+
+  NHSetMarker(TH1F *histo, Color_t Color=2, Style_t Style=2, Size_t Size = 0.2)
+    {
+      histo->SetMarkerColor(Color);
+      histo->SetMarkerStyle(Style);
+      histo->SetLineColor(Color);
+      histo->SetMarkerSize(Size);
+    }
+
+  NHSetMarker(TH2F *histo, Color_t Color=2, Style_t Style=2, Size_t Size = 0.2)
+    {
+      histo->SetMarkerColor(Color);
+      histo->SetMarkerStyle(Style);
+      histo->SetLineColor(Color);
+      histo->SetMarkerSize(Size);
+    }
+  ~NHSetMarker(){}
+};
+
+
+
+
+class NHSetLine{
+ public:
+
+  NHSetLine(TH1F *histo, Color_t Color=2, Style_t Style=2, Size_t Size = 0.2)
+    {
+      histo->SetLineColor(Color);
+      histo->SetLineStyle(Style);
+      histo->SetLineWidth(Size);
+    }
+  NHSetLine(TH2F *histo, Color_t Color=2, Style_t Style=2, Size_t Size = 0.2)
+    {
+      histo->SetLineColor(Color);
+      histo->SetLineStyle(Style);
+      histo->SetLineWidth(Size);
+    }
+
+  ~NHSetLine(){}
+};
+
 
 
 class NStat{
@@ -99,7 +179,7 @@ class NFitMCToData{
       
       frame->Draw() ;
       frame->SetMinimum(0.1);
-      frame->SetMaximum(800.);
+      //      frame->SetMaximum(800.);
       frame->SetXTitle(Str);
       frame->SetTitle(Str);
 
@@ -116,6 +196,6 @@ class NFitMCToData{
       
       
     }  
-  ~NStat(){}
+  ~ NFitMCToData(){}
 };
 #endif

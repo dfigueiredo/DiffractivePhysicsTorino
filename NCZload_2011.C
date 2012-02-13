@@ -53,7 +53,7 @@ void NCZload_4_2(){
   // Dat10A_Zee = TFile::Open("files/zdiff/4_2/EGrunAZee_v2_2.root");
   cout<<"Loading  DATA10_Zee"<< endl;
   //  DATA10_Zee = TFile::Open("files/zdiff/4_2/EGZee_v2_2.root");
-  DATA10_Zee = TFile::Open("files/zdiff/4_2/Data_Zee_2010B_v2_4.root");
+  DATA10_Zee = TFile::Open("files/zdiff/4_2/Data_Zee_2011_v2_4.root");
 
   cout<<"Loading  PYTZ2_Zee"<< endl;
   PYTZ2_Zee = TFile::Open("files/zdiff/4_2/MC_Zee_Z2PY6_v2_4.root");

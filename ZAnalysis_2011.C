@@ -41,31 +41,92 @@ void FindZ2Weight(){
 }
 
 
-void FindC4Weight(){
 
-  NCanvas(1,1,"data");
-  NCanvas(1,1,"ratio");
+void FindMCPUWeight(){
 
-  TH1F * Pyt;
-  TH1F * Dat;
+  NCanvas(1,2,"data");
+  
   TH1F * Data;
-
-  TFile *fzee = new TFile("ZDiffOutputfile.root");
-  Pyt  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_4CPY8");
-  Dat  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");
-  Data  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");
+  TH1F * DataVtx;
+  TH1F * PytZ2;
+  TH1F * PytZ2_Vis;
+  
+  TFile *fzee = new TFile("ZDiffOutputfile_NoWeight2011.root");
+  
+  Data  =  (TH1F*)fzee->Get("NoCuts_InstLumiPerBx_DATA10");
+  DataVtx  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");  
+  PytZ2  =  (TH1F*)fzee->Get("Gen_PUVtx_Z2PY6");
+  PytZ2_Vis  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_Z2PY6");
+  
+  Float_t DataInt = Data->Integral(); 
+  
   data->cd(1);
+  
+  NSetTitle(Data,"Single bunch luminosity [10^{30}cm^{-2}s^{-1}]","Entries");
+  NSetLabelSize(Data);
+  NSetTitleSize(Data,0.8,0.8,0.06);
+  NStat(Data,0);
+  Data->SetTitle("Z Luminosity");
+  NHSetMarker(Data);
   Data->Draw();
-
-  Float_t scale = Pyt->Integral()/Dat->Integral();
-  cout << "Scaling factor to conserve MC luminosity = " << scale << endl;
-  ratio->cd(1);
-  Dat->Divide(Pyt);
-  //  Dat->Scale(scale);
-  Dat->Draw();
-  cout << "Float_t C4Weight[] = {" ;
-  for (Int_t j = 1;j<=19; j++)   cout <<  Dat->GetBinContent(j) << ", " ;
+  
+  
+  Int_t const NRS = 1000;
+  //  Float_t Sigma = 0.0485;
+  Float_t Sigma = 0.075;
+  Int_t const MaxVtxInEvent = 25;
+  Float_t sigma_NSD =  Sigma*pow(10,-24);
+  char hname[100]; 
+  sprintf(hname,"Pois_Theory");
+  gDirectory->Delete(hname);
+  TH1F * pois_theory  = new TH1F(hname,hname,MaxVtxInEvent,-0.5,MaxVtxInEvent-0.5); // Pois hystograms
+  pois_theory->Sumw2();
+  
+  for (Int_t NL = 1; NL<=NRS; NL++)
+    {
+      
+      Double_t LumiR = Data->GetRandom();
+      
+      for (Int_t p=0;p<MaxVtxInEvent;p++)
+	{
+	  
+	  Float_t Lum_bunch = (LumiR*pow(10,30)/11346)*sigma_NSD ;
+	  Float_t pois_prob = pow(Lum_bunch,p) * exp(-Lum_bunch)/TMath::Factorial(p) ;		
+	  pois_theory->Fill(p+0.01,pois_prob);
+	  
+	}
+    }
+  
+  if (pois_theory->GetEntries() !=0)
+    {
+      pois_theory->Scale(DataInt/NRS);
+      data->cd(2);
+      NSetTitle(pois_theory,"# PU Vertexes in event","Fraction");
+      NSetLabelSize(pois_theory);
+      NSetTitleSize(pois_theory,0.8,0.8,0.06);
+      NStat(pois_theory,0);
+      pois_theory->SetTitle("MC PU generated vertex distribution");
+      //	    pois_theory->SetTitleSize(1.);
+      NHSetMarker(pois_theory);
+      DataVtx->Draw();  
+      pois_theory->Draw("SAME HIST");
+      
+    }
+  
+  //
+  //	PytZ2->Scale(1./scale);
+  
+  Float_t scale = PytZ2_Vis->Integral()/PytZ2->Integral();
+  cout << "MC scale =" << scale << endl;
+  
+  cout << "Float_t Z2Weight[] = {" ;
+  for (Int_t j = 1;j<=19; j++)
+    { 
+      Float_t   ra = scale*pois_theory->GetBinContent(j)/PytZ2->GetBinContent(j);
+      cout <<  ra << ", " ;
+    }
   cout << " 0 }; " << endl;
+  return;
 }
 
 
@@ -77,12 +138,11 @@ void Vertex2010(){
   TH1F * Dat;
 
   TFile *fzee = new TFile("ZDiffOutputfile.root");
-  Dat  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_Data10");
+  Dat  =  (TH1F*)fzee->Get("NoCuts_GoodVtx_DATA10");
   data->cd(1);
   NLogAxis(0,1);
   Dat->Draw();
   Dat->GetXaxis()->SetTitle("Number of PU");
-  Dat->GetYaxis()->SetTitle("Entries");
   Dat->GetYaxis()->SetTitle("Entries");
   Dat->SetTitle("# of PU vertexes for Z->ee events in 2010");
   Int_t nVtx0 = Dat->GetBinContent(1);
@@ -103,7 +163,7 @@ void FindZ2HFWeight(){
   TH1F * DifPyt;
   TH1F * DifDat;
 
-  TFile *fzee = new TFile("ZDiffOutputfile.root");
+  TFile *fzee = new TFile("ZDiffOutputfile_Weight2011.root");
   Pyt1  =  (TH1F*)fzee->Get("NVTX1_nTowersHF_plus_PythiaZ2");
   Dat1  =  (TH1F*)fzee->Get("NVTX1_nTowersHF_plus_Data10");
 
@@ -132,7 +192,7 @@ void Data10Z2Comp(){
   TH1F *Pyt[Nbin];
   TH1F *Dat[Nbin];
 
-  TFile *fzee = new TFile("ZDiffOutputfile.root");
+  TFile *fzee = new TFile("ZDiffOutputfile_73Weight2011.root");
   TString NT[Nbin];
 
   NCanvas(2,2,"HFNVTX1");
@@ -153,13 +213,13 @@ void Data10Z2Comp(){
   NT[k++] = "HF0NVTX1_nPart_PF_";
   NT[k++] = "HF0NVTX1_Xi_PF_";
   NT[k++] = "HF0NVTX1_etaZ_";
-  NT[k++] = "HF0NVTX1_etaWeightedOnEnergy_PF_";
+  NT[k++] = "HF0NVTX1_vertexMolteplicity_";
 
 
-  //  NT[k++] = "NVTX1_EBarrel_";
-  // NT[k++] = "NVTX1_EEndcap_";
-  NT[k++] = "NVTX1_EHF_S_";
-  NT[k++] = "NVTX1_EHF_L_";
+  NT[k++] = "NVTX1_EBarrel_";
+  NT[k++] = "NVTX1_EEndcap_";
+  //  NT[k++] = "NVTX1_EHF_S_";
+  //NT[k++] = "NVTX1_EHF_L_";
   NT[k++] = "NVTX1_EHF_";
   NT[k++] = "NVTX2_EBarrel_";
   NT[k++] = "NVTX2_EEndcap_";
@@ -171,7 +231,7 @@ void Data10Z2Comp(){
   NT[k++] = "NVTX1_nTowersHF_plus_";
   NT[k++] = "NVTX1_max_eta_gap_PF_";
   NT[k++] = "NVTX1_etaZ_";
-  NT[k++] = "NVTX1_etaWeightedOnEnergy_PF_";
+  NT[k++] = "NVTX1_vertexMolteplicity_";
 
   NT[k++] = "NoCuts_GoodVtx_";
   NT[k++] = "NoCuts_Xi_PF_";
@@ -205,11 +265,10 @@ void Data10Z2Comp(){
       if (ii>k1 && ii<= k2)  HF0NVTX1->cd(ii-k1);
       k1 = k2;
       k2 = k1+9;
-      cout << "k1 = " << k1 << " k2 = " << k2 << endl;
       if (ii> k1 && ii<= k2) NVTX1_A->cd(ii-k1);
       k1 = k2;
       k2 = k1+4;
-      cout << "k1 = " << k1 << " k2 = " << k2 << endl;
+      //      cout << "k1 = " << k1 << " k2 = " << k2 << endl;
       if (ii>k1 && ii<= k2) NVTX1_B->cd(ii-k1);
       k1 = k2;
       k2 = k1+4;
@@ -278,7 +337,7 @@ void fit2histo ()
   TH1F * Dat[Nhist];
   TH1F * Pom[Nhist];
 
-  TFile *fzee = new TFile("ZDiffOutputfile.root");
+  TFile *fzee = new TFile("ZDiffOutputfile_73Weight2011.root");
 
   //  cout<< fzee << endl;
 
@@ -286,8 +345,8 @@ void fit2histo ()
   NT[0] = "SGETA1NVTX1_max_eta_gap_PF_";
   NT[1] = "SGETA1NVTX1_max_second_eta_gap_";
   NT[0] = "NVTX1_max_eta_gap_PF_";
-  NT[1] = "NVTX1_max_second_eta_gap_";
-  NT[2] = "HFNVTX1_max_eta_gap_PF_";
+  NT[1] = "NVTX1_MaxEtaGap_";
+  //  NT[1] = "NVTX1_sumECASTOR_minus_";
   NT[3] = "NVTX1_EHF_";
 
   TString Str[Nhist];
@@ -302,9 +361,9 @@ void fit2histo ()
 
   for (Int_t i=0;i<Nhist-2;i++)
     {
-      Pyt[i]  =  (TH1F*)fzee->Get(NT[i]+"PythiaZ2");  
-      Dat[i]  =  (TH1F*)fzee->Get(NT[i]+"Data10");
-      Pom[i]  =  (TH1F*)fzee->Get(NT[i]+"Pompyt");
+      Pyt[i]  =  (TH1F*)fzee->Get(NT[i]+"Z2PY6");  
+      Dat[i]  =  (TH1F*)fzee->Get(NT[i]+"DATA10");
+      Pom[i]  =  (TH1F*)fzee->Get(NT[i]+"POMPYT");
 
 
       if (Pyt[i] == 0 || Dat[i] == 0 || Pom[i] ==0 ) 
@@ -323,3 +382,164 @@ void fit2histo ()
 
 }  
 
+void PlotHF_SL ()
+{
+  
+  Int_t const Nhist = 8;
+
+  TH1F * Pyt[Nhist];
+  TH1F * Dat[Nhist];
+  TH1F * Ra[Nhist];
+
+
+  TFile *fzee = new TFile("ZDiffOutputfile_73Weight2011.root");
+
+  //  cout<< fzee << endl;
+
+  TString NT[Nhist];
+
+  NT[0] = "NVTX1_EHFSGT0_SL_";
+  NT[1] = "NVTX1_EHFLGT0_SL_";
+  NT[2] = "NVTX1_EHFSLGT0_SL_";
+  NT[3] = "NVTX1_EtaEnergy_S_";
+  NT[4] = "NVTX1_EtaEnergy_L_";
+  NT[5] = "NVTX1_EtaEnergy_";
+  NT[6] = "NVTX2_EtaEnergy_";
+  NT[7] = "NVTX3_EtaEnergy_";
+
+
+  TString Str[Nhist];
+
+  Str[0] = "VTX1 HF_S>0";
+  Str[1] = "VTX1 HF_L>0";
+  Str[2] = "VTX1 HF_SL>0 ";
+  Str[3] = "VTX1 HF_S ";
+  Str[4] = "VTX1 HF_L ";
+  Str[5] = "VTX1 EFlow ";
+  Str[6] = "VTX2 EFlow ";
+  Str[7] = "VTX3 EFlow ";
+
+
+  NCanvas(3,2,"VTX1_HF_SL");
+  NCanvas(2,2,"VTX1_HF");
+  NCanvas(3,2,"VTX1_EFlow");
+
+
+  for (Int_t i=0;i<Nhist;i++)
+    {
+      Pyt[i]  =  (TH1F*)fzee->Get(NT[i]+"Z2PY6");  
+      Dat[i]  =  (TH1F*)fzee->Get(NT[i]+"DATA10");
+
+      if (Pyt[i] == 0 || Dat[i] == 0) 
+	{
+	  cout << "Pointers not assigned" << endl;
+	  return;
+	}
+      if(i<3)
+	{
+	  VTX1_HF_SL->cd(i+1);
+	  gPad->SetLogx(0);
+	  gPad->SetLogy(1);
+	  NSetTitle(Dat[i],"Events","HF Energy [GeV]");
+	  NSetLabelSize(Dat[i],0.01,0.01,0.04);
+	  NSetTitleSize(Dat[i],0.8,0.8,0.06);
+	  NStat(Dat[i],0);
+	  NHSetLine(Dat[i],2,1,1.);
+	  NHSetLine(Pyt[i],4,2,1.);
+
+	  Dat[i]->SetTitle(Str[i]);
+	  Dat[i]->GetXaxis()->SetRange(0,30);
+	  Dat[i]->Draw();
+	  Pyt[i]->Draw("SAME HIST");
+	  //      Dat[i]->Divide(Pyt[i]);
+	  //Dat[i]->Draw();
+
+	  Ra[i] = (TH1F*) Dat[i]->Clone();
+	  Ra[i]->Divide(Pyt[i]);
+	  
+	  TLegend *legend = new TLegend(0.4,0.6,0.7,0.8);
+	  legend->SetTextFont(72);
+	  legend->SetTextSize(0.05);
+	  legend->SetBorderSize(0.);
+	  legend->AddEntry(Dat[i],"Data","l");
+	  legend->AddEntry(Pyt[i]," Z2","l");
+	  legend->Draw();
+
+	  VTX1_HF_SL->cd(i+4);
+	  NHSetMarker(Ra[i],4,20,0.4);
+	  NSetTitle(Ra[i],"Enery","Ratio");
+	  Ra[i]->SetMaximum(2);
+	  Ra[i]->SetMinimum(0.5);
+	  Ra[i]->Draw("P");
+	}
+      else if (i>=3 && i<5)
+	{
+	  VTX1_HF->cd(i-2);
+	  NSetTitle(Dat[i],"Rapidity","Energy [GeV]");
+	  NSetLabelSize(Dat[i]);
+	  NSetTitleSize(Dat[i],0.8,0.8,0.06);
+	  NStat(Dat[i],0);
+	  NHSetLine(Dat[i],2,1,1.);
+	  NHSetLine(Pyt[i],4,2,1.);
+
+	  Dat[i]->SetTitle(Str[i]);
+	  //	  Dat[i]->SetMaximum(30);
+	  Dat[i]->Draw();
+	  
+	  Pyt[i]->Draw("SAME HIST");
+	  Ra[i] = (TH1F*) Dat[i]->Clone();
+	  Ra[i]->Divide(Pyt[i]);
+	  
+	  TLegend *legend = new TLegend(0.4,0.6,0.7,0.8);
+	  legend->SetTextFont(72);
+	  legend->SetTextSize(0.05);
+	  legend->SetBorderSize(0.);
+	  legend->AddEntry(Dat[i],"Data","l");
+	  legend->AddEntry(Pyt[i]," Z2","l");
+	  legend->Draw();
+
+	  VTX1_HF->cd(i);
+	  NHSetMarker(Ra[i],4,20,0.4);
+	  NSetTitle(Ra[i],"Rapidity","Ratio");
+	  Ra[i]->SetMaximum(1.8);
+	  Ra[i]->Draw("P");
+	}
+      else if (i>=5 && i<8) // EFlow
+	{
+	  VTX1_EFlow->cd(i-4);
+	  NSetTitle(Dat[i],"Rapidity","Energy/Event [GeV]");
+	  NSetLabelSize(Dat[i],0.01,0.01,0.04);
+	  NSetTitleSize(Dat[i],0.9,0.9,0.05);
+	  NStat(Dat[i],0);
+	  NHSetLine(Dat[i],2,1,1.);
+	  NHSetLine(Pyt[i],4,2,1.);
+
+	  Dat[i]->SetTitle(Str[i]);
+	  //	  Dat[i]->SetMaximum(200);
+
+	  Dat[i]->Draw();
+	  
+	  Pyt[i]->Draw("SAME HIST");
+	  Ra[i] = (TH1F*) Dat[i]->Clone();
+	  Ra[i]->Divide(Pyt[i]);
+	  
+	  TLegend *legend = new TLegend(0.4,0.7,0.8,0.8);
+	  legend->SetTextFont(72);
+	  legend->SetTextSize(0.05);
+	  legend->SetBorderSize(0.);
+	  legend->AddEntry(Dat[i],"Data","l");
+	  legend->AddEntry(Pyt[i]," Z2","l");
+	  legend->Draw();
+
+	  VTX1_EFlow->cd(i-1);
+	  NHSetMarker(Ra[i],4,20,0.4);
+	  NSetTitle(Ra[i],"Rapidity","Ratio");
+	  Ra[i]->SetMaximum(1.8);
+	  Ra[i]->Draw("P");
+	}
+    }
+
+
+  return;
+
+}  

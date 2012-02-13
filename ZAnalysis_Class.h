@@ -10,6 +10,7 @@
 #define ZAnalysisBase_cxx
 
 
+
 #include "ZAnalysisBase.h"
 #include "ZAnalysisBase.C"
 #include "HistoZDiff_NC.h"
@@ -52,6 +53,8 @@ class ZAnalysis_Class : public ZAnalysisBase {
    HCand* hCandHF0NVTX1;
    HCand* hCandHFNVTX1;
    HCand* hCandSGETA1NVTX1;
+
+   HCandGen* hCandGEN;
    
 
 };
