@@ -13,12 +13,13 @@
 
 #include "ZAnalysisBase.h"
 #include "ZAnalysisBase.C"
-#include "HistoZDiff_NC.h"
 
+#include "HistoZDiff_NC.h"
 
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+
 const Int_t kMaxtimestamp_timeLow = 1;
 const Int_t kMaxtimestamp_timeHigh = 1;
 
@@ -34,7 +35,6 @@ class ZAnalysis_Class : public ZAnalysisBase {
     };
   
 
-
    TFile *fA;
    TTree *tree_fA;
    TFile *fB;
@@ -48,10 +48,12 @@ class ZAnalysis_Class : public ZAnalysisBase {
    HCand* hCandNoCuts;
    HCand* hCandHF0;
    HCand* hCandNVTX1;
+   HCand* hCandNVTX1NoPUBef;
+   HCand* hCandNVTX1NoPUAft;
    HCand* hCandNVTX2;
    HCand* hCandNVTX3;
    HCand* hCandHF0NVTX1;
-   HCand* hCandHFNVTX1;
+   HCand* hCandGAP3NVTX1;
    HCand* hCandSGETA1NVTX1;
 
    HCandGen* hCandGEN;

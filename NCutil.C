@@ -60,7 +60,7 @@ int factorial(int n){
 
 Float_t meanEvt( Float_t LumInt){
 
-  Float_t sigma_NSD =  0.060*pow(10,-24);
+  Float_t sigma_NSD =  0.070*pow(10,-24);
   Float_t Lum_bunch = (LumInt*pow(10,30)/11346)*sigma_NSD ;
 
   cout << "Average events = " << Lum_bunch << endl;

@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Feb  6 09:02:16 2012 by ROOT version 5.30/02
+// Thu Mar 22 09:42:43 2012 by ROOT version 5.30/02
 // from TTree tree_/tree_
-// found on file: files/zdiff/4_2/Data_Zee_2010B_v2_4.root
+// found on file: files/zdiff/4_2/MC_Zee_Z2PY6_v2_6.root
 //////////////////////////////////////////////////////////
 
 #ifndef ZAnalysis_Base_h
@@ -133,7 +133,7 @@ public :
    vector<double>  tracksPT_gen;
    vector<double>  etaOfTracksPT_gen;
    Double_t        PUMCweight;
-   Int_t           PU_NumInt;
+   vector<int>     PU_NumInt;
    vector<float>   PU_zpos;
    vector<int>     PU_ntrks_lowpT;
    vector<int>     PU_ntrks_highpT;
@@ -287,11 +287,11 @@ ZAnalysis_Base::ZAnalysis_Base(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("files/zdiff/4_2/Data_Zee_2010B_v2_4.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("files/zdiff/4_2/MC_Zee_Z2PY6_v2_6.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("files/zdiff/4_2/Data_Zee_2010B_v2_4.root");
+         f = new TFile("files/zdiff/4_2/MC_Zee_Z2PY6_v2_6.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("files/zdiff/4_2/Data_Zee_2010B_v2_4.root:/Selection");
+      TDirectory * dir = (TDirectory*)f->Get("files/zdiff/4_2/MC_Zee_Z2PY6_v2_6.root:/Selection");
       dir->GetObject("tree_",tree);
 
    }

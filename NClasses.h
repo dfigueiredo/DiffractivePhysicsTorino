@@ -167,18 +167,29 @@ class NFitMCToData{
       // model(x) = fsig*MC2_in(x) + (1-fsig)*MC1_in(x)
       
       RooAddPdf model("model","model",RooArgList(PDFMC2_in,PDFMC1_in),fsig) ;
+
       
       model.fitTo(Data_in);
-      
+
+      // Perform fit and save result
+      RooFitResult* r = model.fitTo(Data_in,RooFit::Save()) ;
+      r->Print("fsig");
+
       RooPlot* frame = x.frame() ;
+
       Data_in.plotOn(frame,  RooFit::Name("Data"),RooFit::DrawOption(" ")) ; 
+
       model.plotOn(frame, RooFit::Name("Fit")) ; 
+      model.paramOn(frame) ; 
       // 
-      model.plotOn(frame,  RooFit::Name("Pythia"), RooFit::Components(PDFMC1_in),RooFit::LineColor(kBlue),RooFit::LineStyle(kDotted)) ; 
-      model.plotOn(frame, RooFit::Name("Pompyt"),RooFit::Components(PDFMC2_in),RooFit::LineColor(kRed),RooFit::LineStyle(kDashed)) ; 
+
+      model.plotOn(frame,  RooFit::Name("Pythia"), RooFit::Components(PDFMC1_in),
+		   RooFit::LineColor(kBlue),RooFit::LineStyle(kDotted)) ; 
+      model.plotOn(frame, RooFit::Name("Pompyt"),RooFit::Components(PDFMC2_in),
+		   RooFit::LineColor(kRed),RooFit::LineStyle(kDashed)) ; 
       
       frame->Draw() ;
-      frame->SetMinimum(0.1);
+      frame->SetMinimum(1.);
       //      frame->SetMaximum(800.);
       frame->SetXTitle(Str);
       frame->SetTitle(Str);

@@ -19,10 +19,14 @@ TFile *Dat_ZeeB;
 TFile *NDat_ZeeA;
 TFile *NDat_ZeeB;
 TFile *DATA10_Zee;
+TFile *DATA11_Zee;
+TFile *DATA1011_Zee;
 TFile *Dat10_Zee;
-TFile *PYTZ2_Zee;
-TFile *PYTC4_Zee;
+TFile *POMPYT10_Zmm;
+TFile *Z2PY610_Zmm;
+TFile *Z2PY6_Zee;
 TFile *POMPYT_Zee;
+TFile *C4PY8_Zee;
 
 void NCZload_3_4(){
   
@@ -40,6 +44,13 @@ void NCZload_3_4(){
   cout<<"Loading  Dat_ZeeB"<< endl;
   Dat_ZeeB = TFile::Open("files/zdiff/3_4/Run2010B_ee_v1_4.root");
 
+  cout<<"Loading  Z2PY610_Zmm"<< endl;
+  Z2PY610_Zmm = TFile::Open("files/zdiff/3_4/pythiaZ2_mm_v1_3.root");
+
+  cout<<"Loading  POMPYT10_Zmm"<< endl;
+  POMPYT10_Zmm = TFile::Open("files/zdiff/3_4/DiffractiveMC_mm_v1_4.root");
+
+
 
   return;   
 
@@ -51,18 +62,25 @@ void NCZload_4_2(){
   
   //  cout<<"Loading  Dat10A_Zee"<< endl;
   // Dat10A_Zee = TFile::Open("files/zdiff/4_2/EGrunAZee_v2_2.root");
-  cout<<"Loading  DATA10_Zee"<< endl;
   //  DATA10_Zee = TFile::Open("files/zdiff/4_2/EGZee_v2_2.root");
-  DATA10_Zee = TFile::Open("files/zdiff/4_2/Data_Zee_2011_v2_4.root");
+  cout<<"Loading  DATA10_Zee"<< endl;
+  DATA10_Zee = TFile::Open("files/zdiff/4_2/Data_Zee_2010_v2_6.root");
 
-  cout<<"Loading  PYTZ2_Zee"<< endl;
-  PYTZ2_Zee = TFile::Open("files/zdiff/4_2/MC_Zee_Z2PY6_v2_4.root");
+  cout<<"Loading  DATA11_Zee"<< endl;
+  DATA11_Zee = TFile::Open("files/zdiff/4_2/Data_Zee_2011_v2_6.root");
 
-  cout<<"Loading  PYTC4_Zee"<< endl;
-  PYTC4_Zee = TFile::Open("files/zdiff/4_2/MC_Zee_4CPY8_v2_4.root");
+  cout<<"Loading  DATA1011_Zee"<< endl;
+  DATA1011_Zee = TFile::Open("files/zdiff/4_2/Data_Zee_2010_2011_NVTXLT3_v2_4.root");
+
+
+  cout<<"Loading  Z2PY6_Zee"<< endl;
+  Z2PY6_Zee = TFile::Open("files/zdiff/4_2/MC_Zee_Z2PY6_v2_6.root");
+
+  cout<<"Loading  C4PY8_Zee"<< endl;
+  C4PY8_Zee = TFile::Open("files/zdiff/4_2/MC_Zee_4CPY8_v2_4.root");
 
   cout<<"Loading POMPYT_Zee"<< endl;
-  POMPYT_Zee = TFile::Open("files/zdiff/4_2/MC_Zee_POMPYT_v2_4.root");
+  POMPYT_Zee = TFile::Open("files/zdiff/4_2/MC_Zee_POMPYT_v2_6.root");
 
 
   return;   
